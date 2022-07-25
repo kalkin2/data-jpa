@@ -53,4 +53,38 @@ class MemberJpaRepositoryTest {
 
     }
 
+    @Test
+    public void pagingTest(){
+        //given
+        memberJpaRepository.save(new Member("member1",7, null));
+        memberJpaRepository.save(new Member("member2",10, null));
+        memberJpaRepository.save(new Member("member3",24, null));
+        memberJpaRepository.save(new Member("member4",24, null));
+        memberJpaRepository.save(new Member("member5",24, null));
+        memberJpaRepository.save(new Member("member6",24, null));
+        memberJpaRepository.save(new Member("member7",24, null));
+        memberJpaRepository.save(new Member("member8",24, null));
+        memberJpaRepository.save(new Member("member9",24, null));
+        memberJpaRepository.save(new Member("member10",24, null));
+        memberJpaRepository.save(new Member("member11",24, null));
+        memberJpaRepository.save(new Member("member12",24, null));
+        memberJpaRepository.save(new Member("member13",24, null));
+        memberJpaRepository.save(new Member("member14",24, null));
+        memberJpaRepository.save(new Member("member15",24, null));
+        memberJpaRepository.save(new Member("member16",24, null));
+
+
+        int age = 24;
+        int offset = 0;
+        int limit = 10;//10개씩
+        List<Member> byPage = memberJpaRepository.findByPage(age, offset,limit);
+        long totalCnt = memberJpaRepository.totalCnt(age);
+
+        assertThat(byPage.size()).isEqualTo(limit);
+
+        assertThat(totalCnt).isEqualTo(14);
+
+
+    }
+
 }
