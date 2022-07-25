@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import study.data.jpa.entity.Member;
 
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -29,6 +31,25 @@ class MemberJpaRepositoryTest {
         assertThat(findMember.getId()).isEqualTo(member.getId());
         assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
         assertThat(findMember).isEqualTo(member);
+
+    }
+
+    @Test
+    public void greaterThenTest(){
+        //save
+        Member member1 = new Member("a1",24, null);
+        Member member2 = new Member("a2",25, null);
+        Member member3 = new Member("a3",30, null);
+
+        memberJpaRepository.save(member1);
+        memberJpaRepository.save(member2);
+        memberJpaRepository.save(member3);
+
+        List<Member> result = memberJpaRepository.findByUsernameAngAgeGreaterThen("a3", 29);
+
+        assertThat(result.get(0).getAge()).isEqualTo(30);
+        assertThat(result.size()).isEqualTo(1);
+
 
     }
 
