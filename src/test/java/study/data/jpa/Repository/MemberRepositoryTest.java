@@ -4,6 +4,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import study.data.jpa.dto.MemberDto;
 import study.data.jpa.entity.Member;
@@ -102,6 +105,58 @@ class MemberRepositoryTest {
         result.forEach(System.out::println);
 
         assertThat(result.size()).isEqualTo(2);
+
+    }
+
+
+    @Test
+    public void pagingTest(){
+        //given
+        memberRepository.save(new Member("member1",7, null));
+        memberRepository.save(new Member("member2",10, null));
+        memberRepository.save(new Member("member3",24, null));
+        memberRepository.save(new Member("member4",24, null));
+        memberRepository.save(new Member("member5",24, null));
+        memberRepository.save(new Member("member6",24, null));
+        memberRepository.save(new Member("member7",24, null));
+        memberRepository.save(new Member("member8",24, null));
+        memberRepository.save(new Member("member9",24, null));
+        memberRepository.save(new Member("member10",24, null));
+        memberRepository.save(new Member("member11",24, null));
+        memberRepository.save(new Member("member12",24, null));
+        memberRepository.save(new Member("member13",24, null));
+        memberRepository.save(new Member("member14",24, null));
+        memberRepository.save(new Member("member15",24, null));
+        memberRepository.save(new Member("member16",24, null));
+
+
+        int age = 24;
+        int offset = 0;
+        int limit = 10;//10개씩
+
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "username"));
+
+        //when
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+
+        //entity->dto
+        Page<MemberDto>pageDtos = page.map(entity->new MemberDto(entity.getId()+100,entity.getUsername(),null)
+        );
+
+        //then
+        List<MemberDto> content = pageDtos.getContent();
+        long totalElements = pageDtos.getTotalElements();
+        int totalPages = pageDtos.getTotalPages();
+        int size = pageDtos.getSize();
+
+        content.forEach(System.out::println);
+
+        assertThat(totalElements).isEqualTo(14);
+        assertThat(totalPages).isEqualTo(2);
+        assertThat(size).isEqualTo(10);
+        assertThat(page.isFirst()).isTrue();
+
+
 
     }
 
