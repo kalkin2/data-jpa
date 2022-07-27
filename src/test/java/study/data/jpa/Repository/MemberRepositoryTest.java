@@ -12,6 +12,7 @@ import study.data.jpa.dto.MemberDto;
 import study.data.jpa.entity.Member;
 import study.data.jpa.entity.Team;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.util.List;
@@ -30,6 +31,9 @@ class MemberRepositoryTest {
 
     @Autowired
     TeamRepository teamRepository;
+
+    @Autowired
+    EntityManager em;
 
     @Test
     public void testMember(){
@@ -175,6 +179,44 @@ class MemberRepositoryTest {
         Member member5 = memberRepository.findByUsername("member5");
         System.out.println("member5::"+member5);
         assertThat(member5.getAge()).isEqualTo(51);
+    }
+
+    @Test
+    public void fetchJoinTest(){
+
+        Team team1 = new Team("team1");
+        Team team2 = new Team("team2");
+        teamRepository.save(team1);
+        teamRepository.save(team2);
+
+        memberRepository.save(new Member("member1",10, team1));
+        memberRepository.save(new Member("member2",20, team1));
+        memberRepository.save(new Member("member3",30, team2));
+        memberRepository.save(new Member("member4",40, team2));
+        memberRepository.save(new Member("member5",50, team2));
+
+        em.flush();
+        em.clear();
+        //Team 을 멤버수 만큼 조회함 (N+1문제)
+//        List<Member> memberList = memberRepository.findAll();
+//        for(Member member : memberList){
+//            System.out.println("member name : "+ member.getUsername());
+//            System.out.println("team name :"+ member.getTeam().getName());
+//        }
+
+        //team 쿼리가 조인해서 한번만 조회.
+//        List<Member> teamFetchJoin = memberRepository.findTeamFetchJoin();
+//        for(Member member : teamFetchJoin){
+//            System.out.println("member name : "+ member.getUsername());
+//            System.out.println("team name : "+ member.getTeam().getName());
+//        }
+
+        //entityGraph를 이용해서 위와 같이 사용가능.
+        List<Member> entityGraph = memberRepository.findAll();
+        for(Member member : entityGraph){
+            System.out.println("member name : "+ member.getUsername());
+            System.out.println("team name : "+ member.getTeam().getName());
+        }
     }
 
 }
