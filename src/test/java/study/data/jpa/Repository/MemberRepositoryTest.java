@@ -160,7 +160,21 @@ class MemberRepositoryTest {
 
     }
 
+    @Test
+    public void bulkAgeUpdate(){
 
+       memberRepository.save(new Member("member1",10, null));
+       memberRepository.save(new Member("member2",20, null));
+       memberRepository.save(new Member("member3",30, null));
+       memberRepository.save(new Member("member4",40, null));
+       memberRepository.save(new Member("member5",50, null));
 
+        int updateCount = memberRepository.bulkAgeUpdate(30);
+
+        assertThat(updateCount).isEqualTo(3);
+        Member member5 = memberRepository.findByUsername("member5");
+        System.out.println("member5::"+member5);
+        assertThat(member5.getAge()).isEqualTo(51);
+    }
 
 }
